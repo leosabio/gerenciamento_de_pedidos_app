@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu do Restaurante</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Menu do Restaurante</h1>
+<div class="menu">
+    <div class="menu-item">
+        <img src="imagem1.jpg" alt="Comida 1">
+        <h2>Comida 1</h2>
+        <textarea placeholder="Observações"></textarea>
+        <button onclick="adicionarPedido('Comida 1')">Adicionar ao Pedido</button>
+    </div>
+    <div class="menu-item">
+        <img src="imagem2.jpg" alt="Comida 2">
+        <h2>Comida 2</h2>
+        <textarea placeholder="Observações"></textarea>
+        <button onclick="adicionarPedido('Comida 2')">Adicionar ao Pedido</button>
+    </div>
+
+</div>
+
+<script>
+    function adicionarPedido(nome) {
+        const observacao = document.querySelector(`div.menu-item h2:contains('${nome}')`).nextElementSibling.value;
+        fetch('/adicionarPedido', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ nome, observacao })
+        }).then(response => response.json())
+            .then(data => {
+                alert('Pedido adicionado com sucesso!');
+            })
+            .catch(error => {
+                console.error('Erro ao adicionar o pedido:', error);
+            });
+    }
+</script>
+</body>
+</html>
