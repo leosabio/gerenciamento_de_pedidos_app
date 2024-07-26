@@ -1,10 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+  <title>Cozinha</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/styles.css" rel="stylesheet">
+  <style>
+    .riscado {
+      text-decoration: line-through;
+    }
+  </style>
 </head>
 <body>
-$END$
+<div class="container">
+  <h1 class="mt-5">Cozinha</h1>
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th scope="col">Horário</th>
+      <th scope="col">Nome do Pedido</th>
+      <th scope="col">Observações</th>
+      <th scope="col">Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="pedido : ${pedidos}" th:classappend="${pedido.entregue} ? 'riscado' : ''">
+      <td><strong th:text="${#dates.format(pedido.horario, 'dd/MM/yyyy HH:mm')}">Horário</strong></td>
+      <td th:text="${pedido.nome}">Nome do Pedido</td>
+      <td th:text="${pedido.descricao}">Observações</td>
+      <td>
+        <button class="btn btn-success" th:onclick="'riscarPedido(' + ${pedido.id} + ')'">Entregue</button>
+        <button class="btn btn-danger" th:onclick="'excluirPedido(' + ${pedido.id} + ')'">Excluir Pedido</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+  function riscarPedido(id) {
+    fetch(`/api/pedidos/${id}/status?entregue=true`, {
+      method: 'PATCH'
+    })
+            .then(response => {
+              if (response.ok) {
+                location.reload();
+              }
+            })
+            .catch(error => console.error('Erro ao marcar pedido como entregue:', error));
+  }
+
+  function excluirPedido(id) {
+    fetch(`/api/pedidos/${id}`, {
+      method: 'DELETE'
+    })
+            .then(response => {
+              if (response.ok) {
+                location.reload();
+              }
+            })
+            .catch(error => console.error('Erro ao excluir pedido:', error));
+  }
+</script>
 </body>
 </html>
